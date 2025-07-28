@@ -113,6 +113,28 @@ dist
 # FuseBox cache
 .fusebox/
 
+# Ocularr specific
+.env
+uploads/
+*.log
+
+# Database data
+postgres-data/
+
+# Production builds
+frontend/build/
+frontend/dist/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
 # DynamoDB Local files
 .dynamodb/
 
