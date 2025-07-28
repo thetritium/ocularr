@@ -58,7 +58,6 @@ const PublicClubsPage = () => {
     setJoining(clubId);
     try {
       await clubAPI.joinClub(inviteCode);
-      // Refresh the clubs list to update membership status
       fetchPublicClubs();
     } catch (error) {
       console.error('Failed to join club:', error);
@@ -108,7 +107,6 @@ const PublicClubsPage = () => {
       {/* Search and Actions */}
       <div className="mb-8">
         <div className="flex flex-col sm:flex-row gap-4">
-          {/* Search Form */}
           <form onSubmit={handleSearch} className="flex-1">
             <div className="flex">
               <input
@@ -128,7 +126,6 @@ const PublicClubsPage = () => {
             </div>
           </form>
 
-          {/* Quick Actions */}
           <div className="flex gap-2">
             <Link to="/join-club" className="btn-secondary">
               Join by Code
@@ -316,4 +313,54 @@ const PublicClubsPage = () => {
                         >
                           {pageNum}
                         </button>
-                
+                      );
+                    })}
+                  </div>
+                  
+                  <button
+                    onClick={() => handlePageChange(pagination.page + 1)}
+                    disabled={pagination.page === pagination.pages}
+                    className="btn-secondary disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </>
+      )}
+
+      {/* Info Box */}
+      {!loading && clubs.length > 0 && (
+        <div className="mt-8 card p-6">
+          <h3 className="text-lg font-semibold text-gray-100 mb-4">
+            🎬 About Public Clubs
+          </h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-400">
+            <div>
+              <h4 className="font-medium text-gray-300 mb-2">What are public clubs?</h4>
+              <ul className="space-y-1">
+                <li>• Open for anyone to discover and join</li>
+                <li>• No invite code needed to join</li>
+                <li>• May still require a password</li>
+                <li>• Great for meeting new movie enthusiasts</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-medium text-gray-300 mb-2">How do movie cycles work?</h4>
+              <ul className="space-y-1">
+                <li>• 📝 Nomination: Submit movies for a theme</li>
+                <li>• 👀 Watching: Watch all nominated movies</li>
+                <li>• 🎯 Ranking: Guess nominators & rank movies</li>
+                <li>• 🏆 Results: See who won and earned points</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default PublicClubsPage;
