@@ -1,0 +1,230 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  /* Custom scrollbar for dark theme */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    @apply bg-gray-800;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    @apply bg-gray-600 rounded-lg;
+  }
+  
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-500;
+  }
+
+  /* Focus styles */
+  *:focus {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-gray-900;
+  }
+
+  /* Selection styles */
+  ::selection {
+    @apply bg-primary-500 text-white;
+  }
+}
+
+@layer components {
+  /* Custom button styles */
+  .btn {
+    @apply inline-flex items-center justify-center px-4 py-2 text-sm font-medium rounded-lg border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn bg-primary-600 text-white border-transparent hover:bg-primary-700 focus:ring-primary-500;
+  }
+
+  .btn-secondary {
+    @apply btn bg-gray-700 text-gray-200 border-gray-600 hover:bg-gray-600 focus:ring-gray-500;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-gray-400 border-gray-600 hover:bg-gray-800 hover:text-gray-200 focus:ring-gray-500;
+  }
+
+  .btn-danger {
+    @apply btn bg-red-600 text-white border-transparent hover:bg-red-700 focus:ring-red-500;
+  }
+
+  .btn-success {
+    @apply btn bg-green-600 text-white border-transparent hover:bg-green-700 focus:ring-green-500;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs;
+  }
+
+  .btn-lg {
+    @apply px-6 py-3 text-base;
+  }
+
+  /* Custom input styles */
+  .input {
+    @apply block w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded-lg text-gray-100 placeholder-gray-400 transition-colors duration-200 focus:border-primary-500 focus:ring-primary-500;
+  }
+
+  .input-error {
+    @apply border-red-500 focus:border-red-500 focus:ring-red-500;
+  }
+
+  /* Custom card styles */
+  .card {
+    @apply bg-gray-800 border border-gray-700 rounded-xl shadow-card;
+  }
+
+  .card-hover {
+    @apply card transition-all duration-200 hover:shadow-card-hover hover:border-gray-600;
+  }
+
+  /* Custom badge styles */
+  .badge {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .badge-primary {
+    @apply badge bg-primary-100 text-primary-800;
+  }
+
+  .badge-secondary {
+    @apply badge bg-gray-100 text-gray-800;
+  }
+
+  .badge-success {
+    @apply badge bg-green-100 text-green-800;
+  }
+
+  .badge-warning {
+    @apply badge bg-yellow-100 text-yellow-800;
+  }
+
+  .badge-danger {
+    @apply badge bg-red-100 text-red-800;
+  }
+
+  /* Dark theme badge variants */
+  .dark .badge-primary {
+    @apply bg-primary-900 text-primary-200;
+  }
+
+  .dark .badge-secondary {
+    @apply bg-gray-700 text-gray-200;
+  }
+
+  .dark .badge-success {
+    @apply bg-green-900 text-green-200;
+  }
+
+  .dark .badge-warning {
+    @apply bg-yellow-900 text-yellow-200;
+  }
+
+  .dark .badge-danger {
+    @apply bg-red-900 text-red-200;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    @apply animate-spin rounded-full border-2 border-gray-300 border-t-primary-600;
+  }
+
+  /* Movie poster styles */
+  .movie-poster {
+    @apply rounded-lg overflow-hidden shadow-lg transition-transform duration-200 hover:scale-105;
+  }
+
+  /* Phase indicator styles */
+  .phase-indicator {
+    @apply flex items-center space-x-2 px-3 py-1 rounded-full text-sm font-medium;
+  }
+
+  .phase-nomination {
+    @apply phase-indicator bg-blue-100 text-blue-800;
+  }
+
+  .phase-watching {
+    @apply phase-indicator bg-yellow-100 text-yellow-800;
+  }
+
+  .phase-ranking {
+    @apply phase-indicator bg-purple-100 text-purple-800;
+  }
+
+  .phase-results {
+    @apply phase-indicator bg-green-100 text-green-800;
+  }
+
+  .phase-idle {
+    @apply phase-indicator bg-gray-100 text-gray-800;
+  }
+
+  /* Dark theme phase variants */
+  .dark .phase-nomination {
+    @apply bg-blue-900 text-blue-200;
+  }
+
+  .dark .phase-watching {
+    @apply bg-yellow-900 text-yellow-200;
+  }
+
+  .dark .phase-ranking {
+    @apply bg-purple-900 text-purple-200;
+  }
+
+  .dark .phase-results {
+    @apply bg-green-900 text-green-200;
+  }
+
+  .dark .phase-idle {
+    @apply bg-gray-700 text-gray-200;
+  }
+
+  /* Gradient text */
+  .gradient-text {
+    background: linear-gradient(45deg, #0ea5e9, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+@layer utilities {
+  /* Custom animations */
+  .animate-fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
+  .animate-slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .animate-bounce-subtle {
+    animation: bounceSubtle 2s infinite;
+  }
+
+  /* Text utilities */
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  /* Glassmorphism effect */
+  .glass {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+  }
+
+  /* Custom grid layouts */
+  .grid-auto-fit {
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .grid-auto-fill {
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  }
+}
