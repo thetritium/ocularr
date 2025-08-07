@@ -77,43 +77,69 @@ router.post('/register', async (req, res) => {
   }
 });
 
-// Login user
+// Login user - supports both username and email
 router.post('/login', async (req, res) => {
-  const { identifier, password, rememberMe } = req.body;
+  // DEBUG: Log what we're receiving
+  console.log('🔍 Backend Login Debug - Full request body:', req.body);
+  console.log('🔍 Backend Login Debug - Content-Type:', req.headers['content-type']);
+  console.log('🔍 Backend Login Debug - Request keys:', Object.keys(req.body));
+  
+  const { username, password, rememberMe } = req.body; // Extract all parameters including rememberMe
+  
+  console.log('🔍 Backend Login Debug - Extracted values:', {
+    username: username,
+    usernameType: typeof username,
+    usernameLength: username?.length,
+    hasPassword: !!password,
+    passwordType: typeof password,
+    passwordLength: password?.length,
+    rememberMe: rememberMe,
+    rememberMeType: typeof rememberMe
+  });
 
-  if (!identifier || !password) {
+  if (!username || !password) {
+    console.error('❌ Backend Login Debug - Missing required fields');
     return res.status(400).json({ error: 'Username/email and password are required' });
   }
 
   try {
+    console.log('🚀 Backend Login Debug - Proceeding with database lookup for:', username);
+    
     // Find user by username or email
     const result = await pool.query(
-      'SELECT * FROM users WHERE username = $1 OR email = $1',
-      [identifier.toLowerCase()]
+      'SELECT id, username, email, password_hash, display_name FROM users WHERE username = $1 OR email = $1',
+      [username]
     );
 
     if (result.rows.length === 0) {
+      console.log('❌ Backend Login Debug - User not found in database');
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
     const user = result.rows[0];
+    console.log('✅ Backend Login Debug - User found:', user.username);
 
-    // Check password
+    // Verify password
     const validPassword = await bcrypt.compare(password, user.password_hash);
     if (!validPassword) {
+      console.log('❌ Backend Login Debug - Invalid password for user:', user.username);
       return res.status(401).json({ error: 'Invalid credentials' });
     }
 
-    // Generate JWT token with extended expiry if remember me is checked
-    const expiresIn = rememberMe ? '30d' : '24h';
+    console.log('✅ Backend Login Debug - Password valid, creating token with rememberMe:', rememberMe);
+
+    // Create JWT token with appropriate expiration based on rememberMe
+    const tokenExpiration = rememberMe ? '30d' : '1d';
     const token = jwt.sign(
-      { id: user.id, username: user.username },
-      process.env.JWT_SECRET,
-      { expiresIn }
+      { userId: user.id, username: user.username },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: tokenExpiration }
     );
 
     // Don't send password hash
     delete user.password_hash;
+
+    console.log('✅ Backend Login Debug - Login successful, sending response');
 
     res.json({
       message: 'Login successful',
@@ -123,8 +149,8 @@ router.post('/login', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ error: 'Server error' });
+    console.error('❌ Backend Login Debug - Database/Server error:', error);
+    res.status(500).json({ error: 'Server error during login' });
   }
 });
 
