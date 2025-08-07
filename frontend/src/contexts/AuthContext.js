@@ -47,19 +47,52 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  // Fixed: Changed parameter name from 'username' to 'identifier' for clarity
-  // and ensure proper mapping to backend 'username' field
-  const login = async (identifier, password) => {
+  const login = async (username, password) => {
     try {
-      console.log('Login attempt:', { identifier, password: password ? '[PROVIDED]' : '[MISSING]' });
-      
-      // Backend expects 'username' field, but it can contain username or email
-      const response = await api.post('/auth/login', { 
-        username: identifier,  // Map identifier to username field expected by backend
-        password: password 
+      // DEBUG: Log what we're receiving and sending
+      console.log('🔍 Login Debug - Received parameters:', {
+        username: username,
+        usernameType: typeof username,
+        usernameLength: username?.length,
+        password: password ? '[PROVIDED]' : '[MISSING]',
+        passwordType: typeof password,
+        passwordLength: password?.length
       });
-      
+
+      // Trim whitespace and ensure we have values
+      const trimmedUsername = username?.trim();
+      const trimmedPassword = password?.trim();
+
+      console.log('🔍 Login Debug - After trimming:', {
+        trimmedUsername: trimmedUsername,
+        trimmedPassword: trimmedPassword ? '[PROVIDED]' : '[MISSING]'
+      });
+
+      if (!trimmedUsername || !trimmedPassword) {
+        console.error('❌ Login Debug - Missing required fields after trimming');
+        return { 
+          success: false, 
+          error: 'Username and password are required' 
+        };
+      }
+
+      const requestData = { 
+        username: trimmedUsername, 
+        password: trimmedPassword 
+      };
+
+      console.log('🚀 Login Debug - Sending request:', {
+        url: '/auth/login',
+        data: { 
+          username: requestData.username,
+          password: '[HIDDEN]'
+        }
+      });
+
+      const response = await api.post('/auth/login', requestData);
       const { token: newToken, user: userData } = response.data;
+      
+      console.log('✅ Login Debug - Success response received');
       
       // Save token and update state
       localStorage.setItem('ocularr_token', newToken);
@@ -68,8 +101,14 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true, user: userData };
     } catch (error) {
-      console.error('Login error:', error);
-      console.error('Login error response:', error.response?.data);
+      console.error('❌ Login Debug - Error occurred:', {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        responseData: error.response?.data,
+        requestData: error.config?.data
+      });
+      
       return { 
         success: false, 
         error: error.response?.data?.error || 'Login failed' 
