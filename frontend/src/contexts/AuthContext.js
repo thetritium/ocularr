@@ -47,26 +47,19 @@ export const AuthProvider = ({ children }) => {
     checkAuth();
   }, []);
 
-  const login = async (identifier, password, rememberMe = false) => {
+  // Fixed: Changed parameter name from 'username' to 'identifier' for clarity
+  // and ensure proper mapping to backend 'username' field
+  const login = async (identifier, password) => {
     try {
-      console.log('Login attempt with:', { 
-        identifier: identifier, 
-        passwordProvided: !!password,
-        rememberMe: rememberMe 
-      });
-
-      // Ensure we're sending the correct field names to match backend expectations
-      const loginData = {
-        username: identifier, // Backend expects 'username' field (can contain username or email)
-        password: password
-      };
-
-      console.log('Sending login data:', { username: loginData.username, passwordLength: loginData.password?.length });
-
-      const response = await api.post('/auth/login', loginData);
-      const { token: newToken, user: userData } = response.data;
+      console.log('Login attempt:', { identifier, password: password ? '[PROVIDED]' : '[MISSING]' });
       
-      console.log('Login successful, received:', { user: userData.username, tokenReceived: !!newToken });
+      // Backend expects 'username' field, but it can contain username or email
+      const response = await api.post('/auth/login', { 
+        username: identifier,  // Map identifier to username field expected by backend
+        password: password 
+      });
+      
+      const { token: newToken, user: userData } = response.data;
       
       // Save token and update state
       localStorage.setItem('ocularr_token', newToken);
@@ -75,25 +68,17 @@ export const AuthProvider = ({ children }) => {
       
       return { success: true, user: userData };
     } catch (error) {
-      console.error('Login error details:', {
-        message: error.message,
-        status: error.response?.status,
-        data: error.response?.data,
-        url: error.config?.url,
-        method: error.config?.method
-      });
-      
+      console.error('Login error:', error);
+      console.error('Login error response:', error.response?.data);
       return { 
         success: false, 
-        error: error.response?.data?.error || 'Login failed. Please check your credentials.' 
+        error: error.response?.data?.error || 'Login failed' 
       };
     }
   };
 
   const register = async (userData) => {
     try {
-      console.log('Registration attempt for:', userData.username);
-      
       const response = await api.post('/auth/register', userData);
       const { token: newToken, user: newUser } = response.data;
       
